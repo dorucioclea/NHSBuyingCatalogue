@@ -356,12 +356,9 @@ async function solutionComplianceEvidencePagePost (req, res, next) {
   claim.status = '1' /* draft */
   claim.ownerId = req.body.ownerId || null
 
-  // Add the evidence record to the solution.
-  req.solution.evidence.push(evidenceRecord)
-
   // update the solution with the new evidence record.
   try {
-    await dataProvider.updateSolutionForCompliance(req.solution)
+    await dataProvider.updateSolutionForCompliance(claim, evidenceRecord, solution.id)
   } catch (err) {
     context.errors.items.push({
       err,
@@ -451,16 +448,16 @@ async function solutionComplianceEvidenceConfirmationPost (req, res) {
     claim.status = '2' /* submitted */
     redirectUrl += `?submitted=${claim.standardId}`
 
-    req.solution.evidence.push({
+    var evidenceRecord = {
       id: require('node-uuid-generator').generate(),
       claimId: req.params.claim_id,
       createdOn: new Date(),
       createdById: req.user.contact.id,
       evidence: 'Evidence Submitted',
       blobId: '' // ID of the file that was just uploaded, this relates a message to a file.
-    })
+    }
 
-    await dataProvider.updateSolutionForCompliance(req.solution)
+    await dataProvider.updateSolutionForCompliance(claim, evidenceRecord, solution.id)
   }
   if (action.save) {
     redirectUrl += '?saved'

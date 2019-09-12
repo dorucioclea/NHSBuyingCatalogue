@@ -40,13 +40,25 @@ module.exports = {
       this.apiClient = {}
     }
 
+    function MockStandardsApplicableApi () {
+      this.apiStandardsApplicablePut = jest.fn()
+      this.apiClient = {}
+    }
+    
+    function MockStandardsApplicableEvidenceApi () {
+      this.apiStandardsApplicableEvidencePost = jest.fn()
+      this.apiClient = {}
+    }
+
     return new DataProvider({
       ContactsApi: MockContactsApi,
       OrganisationsApi: MockOrganisationsApi,
       SolutionsApi: MockSolutionsApi,
       SolutionsExApi: MockSolutionsExApi,
       CapabilityMappingsApi: MockCapabilityMappingsApi,
-      CapabilitiesImplementedEvidenceApi: MockCapabilitiesImplementedEvidenceApi
+      CapabilitiesImplementedEvidenceApi: MockCapabilitiesImplementedEvidenceApi,
+      StandardsApplicableApi: MockStandardsApplicableApi,
+      StandardsApplicableEvidenceApi: MockStandardsApplicableEvidenceApi
     })
   }
 }

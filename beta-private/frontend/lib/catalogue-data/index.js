@@ -66,6 +66,8 @@ class DataProvider {
     this.solutionsExApi = new CatalogueApi.SolutionsExApi()
     this.capabilityMappingsApi = new CatalogueApi.CapabilityMappingsApi()
     this.capabilityEvidenceAPI = new CatalogueApi.CapabilitiesImplementedEvidenceApi()
+    this.standardsApplicableApi = new CatalogueApi.StandardsApplicableApi()
+    this.standardsApplicableEvidenceApi = new CatalogueApi.StandardsApplicableEvidenceApi()
 
     this.TIMEOUT = 1200000
     this.contactsApi.apiClient.timeout = this.TIMEOUT
@@ -74,6 +76,8 @@ class DataProvider {
     this.solutionsExApi.apiClient.timeout = this.TIMEOUT
     this.capabilityMappingsApi.apiClient.timeout = this.TIMEOUT
     this.capabilityEvidenceAPI.apiClient.timeout = this.TIMEOUT
+    this.standardsApplicableApi.apiClient.timeout = this.TIMEOUT
+    this.standardsApplicableEvidenceApi.apiClient.timeout = this.TIMEOUT
   }
 
   async contactById (contactId) {
@@ -316,17 +320,11 @@ class DataProvider {
     return solution
   }
 
-  async updateSolutionForCompliance (solution) {
-    const solnEx = await this.solutionsExApi.apiPorcelainSolutionsExBySolutionBySolutionIdGet(solution.id)
+  async updateSolutionForCompliance (claimedStandard, standardEvidence, solutionid) {
 
-    solnEx.claimedStandard = _.map(solution.standards,
-      std => _.pick(std, ['id', 'status', 'solutionId', 'standardId', 'ownerId'])
-    )
-    solnEx.claimedStandardEvidence = solution.evidence
-    solnEx.claimedStandardReview = solution.reviews
-
-    await this.solutionsExApi.apiPorcelainSolutionsExUpdatePut({ solnEx })
-    return this.solutionForCompliance(solution.id)
+    await this.standardsApplicableApi.apiStandardsApplicablePut({ claimedStandard })
+    await this.standardsApplicableEvidenceApi.apiStandardsApplicableEvidencePost({ standardEvidence })
+    return this.solutionForCompliance(solutionid)
   }
 
   async updateSolutionCapabilityEvidence (solutionID, evidence) {
